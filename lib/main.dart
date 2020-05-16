@@ -15,8 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter App',
       theme: ThemeData(
-        // primarySwatch: Colors.blue,
-        primaryColor: Colors.white,
+        brightness: Brightness.light,
+        primaryColor: Colors.pink[800], //Changing this will change the color of the TabBar
+        accentColor: Colors.cyan[600],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: RandomWords(),
@@ -48,7 +49,8 @@ class RandomWordsState extends State<RandomWords> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup name generator'),
+        title: Text('Startup name'),
+        elevation: 0.0,
         actions: <Widget>[
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
           PopupMenuButton<Choice>(
@@ -92,25 +94,38 @@ class RandomWordsState extends State<RandomWords> {
       // body: _buildSuggestions(),
       body: DefaultTabController(
         length: 3, 
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[],
-            title: new TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.directions_railway)),
-                Tab(icon: Icon(Icons.directions_car)),
-                Tab(icon: Icon(Icons.directions_bike)),
-              ]
-            )
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              flexibleSpace: TabBar(
+                isScrollable: false,
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                tabs: [
+                  Container(
+                    child: Tab(icon: Icon(Icons.directions_railway)),
+                  ),
+                  Container(
+                    width: 100.0,
+                    child: Tab(icon: Icon(Icons.directions_car)),
+                  ),
+                  Container(
+                    child: Tab(icon: Icon(Icons.directions_bike)),
+                  )
+                ]
+              ),
+            ), 
+            body: Container(
+              child: TabBarView(
+                children: [
+                    _buildSuggestions(),
+                    Icon(Icons.directions_transit,size: 50.0,),
+                    Icon(Icons.directions_bike,size: 50.0,),              
+                ]
+              ),
+            ) 
           ),
-          body: TabBarView(
-            children: [
-                Icon(Icons.directions_car,size: 50.0,),
-                Icon(Icons.directions_transit,size: 50.0,),
-                Icon(Icons.directions_bike,size: 50.0,),              
-            ]
-          ),
-        ),
+        )
       ),
     );
   }
