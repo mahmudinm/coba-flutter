@@ -35,47 +35,33 @@ class RandomWordsState extends State<RandomWords> {
   final List<WordPair> _suggestions = <WordPair>[];
   final Set<WordPair> _saved = Set<WordPair>();
   final TextStyle _biggerFont = TextStyle(fontSize: 18.0);
+  Choice _selectedChoice = choices[0];
 
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          
-          final Iterable<ListTile> tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont
-                ),
-              );
-            },
-          );
-
-          final List<Widget> divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles
-          ).toList();
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved Suggesstions'),
-            ),
-            body: ListView(children: divided),
-          );
-
-        }
-      )
-    );
+  void _select(Choice choice) {
+    setState(() {
+      _selectedChoice = choice;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Startup name generator'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved,),
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+          PopupMenuButton<Choice>(
+            onSelected: _select,
+            itemBuilder: (BuildContext context) {
+              return choices.skip(2).map((Choice choice) {
+                return PopupMenuItem<Choice>(
+                  value: choice,
+                  child: Text(choice.title),
+                );
+              }).toList(); 
+            },
+          )
         ],
       ),
       drawer: Drawer(
@@ -103,7 +89,29 @@ class RandomWordsState extends State<RandomWords> {
           ],
         ),
       ),
-      body: _buildSuggestions(),
+      // body: _buildSuggestions(),
+      body: DefaultTabController(
+        length: 3, 
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            title: new TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.directions_railway)),
+                Tab(icon: Icon(Icons.directions_car)),
+                Tab(icon: Icon(Icons.directions_bike)),
+              ]
+            )
+          ),
+          body: TabBarView(
+            children: [
+                Icon(Icons.directions_car,size: 50.0,),
+                Icon(Icons.directions_transit,size: 50.0,),
+                Icon(Icons.directions_bike,size: 50.0,),              
+            ]
+          ),
+        ),
+      ),
     );
   }
 
@@ -146,4 +154,53 @@ class RandomWordsState extends State<RandomWords> {
       },
     );
   }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          
+          final Iterable<ListTile> tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont
+                ),
+              );
+            },
+          );
+
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles
+          ).toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggesstions'),
+            ),
+            body: ListView(children: divided),
+          );
+
+        }
+      )
+    );
+  }  
 }
+
+class Choice {
+  const Choice({this.title, this.icon});
+
+  final String title;
+  final IconData icon;
+}
+
+const List<Choice> choices = const <Choice>[
+  const Choice(title: 'Car', icon: Icons.directions_car),
+  const Choice(title: 'Bicycle', icon: Icons.directions_bike),
+  const Choice(title: 'Boat', icon: Icons.directions_boat),
+  const Choice(title: 'Bus', icon: Icons.directions_bus),
+  const Choice(title: 'Train', icon: Icons.directions_railway),
+  const Choice(title: 'Walk', icon: Icons.directions_walk),
+];
