@@ -9,15 +9,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
-    // final wordPair = WordPair.random();
-    
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter App',
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.pink[800], //Changing this will change the color of the TabBar
-        accentColor: Colors.cyan[600],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: RandomWords(),
@@ -46,87 +43,67 @@ class RandomWordsState extends State<RandomWords> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Startup name'),
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-          PopupMenuButton<Choice>(
-            onSelected: _select,
-            itemBuilder: (BuildContext context) {
-              return choices.skip(2).map((Choice choice) {
-                return PopupMenuItem<Choice>(
-                  value: choice,
-                  child: Text(choice.title),
-                );
-              }).toList(); 
-            },
-          )
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              title: Text('item 1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('item 2'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+    return DefaultTabController(
+      length: 3, 
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+            PopupMenuButton<Choice>(
+              onSelected: _select,
+              itemBuilder: (BuildContext context) {
+                return choices.skip(2).map((Choice choice) {
+                  return PopupMenuItem<Choice>(
+                    value: choice,
+                    child: Text(choice.title),
+                  );
+                }).toList(); 
+              },            
+            )
           ],
-        ),
-      ),
-      // body: _buildSuggestions(),
-      body: DefaultTabController(
-        length: 3, 
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              flexibleSpace: TabBar(
-                isScrollable: false,
-                indicatorColor: Colors.white,
-                labelColor: Colors.white,
-                tabs: [
-                  Container(
-                    child: Tab(icon: Icon(Icons.directions_railway)),
-                  ),
-                  Container(
-                    width: 100.0,
-                    child: Tab(icon: Icon(Icons.directions_car)),
-                  ),
-                  Container(
-                    child: Tab(icon: Icon(Icons.directions_bike)),
-                  )
-                ]
-              ),
-            ), 
-            body: Container(
-              child: TabBarView(
-                children: [
-                    _buildSuggestions(),
-                    Icon(Icons.directions_transit,size: 50.0,),
-                    Icon(Icons.directions_bike,size: 50.0,),              
-                ]
-              ),
-            ) 
+          bottom: TabBar(
+            indicatorColor: Colors.black,
+            tabs: [
+              Tab(icon: Icon(Icons.directions_car)),
+              Tab(icon: Icon(Icons.directions_transit)),
+              Tab(icon: Icon(Icons.directions_bike)),              
+            ]
           ),
-        )
-      ),
+          title: Text('Some demo'),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Drawer Header'),
+                decoration: BoxDecoration(
+                  color: Colors.pink[800],
+                ),
+              ),
+              ListTile(
+                title: Text('Item 1'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Item 1'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [            
+            _buildSuggestions(),
+            Icon(Icons.directions_transit),
+            Icon(Icons.directions_bike),
+          ]
+        ),
+      )
     );
   }
 
